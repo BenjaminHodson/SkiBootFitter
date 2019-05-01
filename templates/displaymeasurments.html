@@ -6,31 +6,36 @@
       <div class="header">
         <h3 class="text-muted" style="text-align:center">Uploaded files</h3>
           </div>
-      <div>
 
-      </div>
-           <div>
-
-      </div>
-        <table style="width:100%">
+        <div>
+        <h3>Select the most accurate images</h3>
+        </div>
+        <!--{% for row in rows %}-->
+            <!--<div class="row">-->
+            <!--{% for item in row %}-->
+            <!--<div class="col-md-3">{{measurments}}</div>-->
+            <!--{% endfor %}-->
+             <!--</div>-->
+        <!--{% endfor %}-->
+ <table style="width:100%">
             <tr>
                 <th><h3 style="text-align:center">your big ass mutha fucking feet</h3></th>
             </tr>
           <tr>
-            <td><img src="" style="width:100%"></td>
-            <td> <img src="" style="width:100%"></td>
-              <td><img src="" style="width:100%"></td>
-            <td> <img src="" style="width:100%"></td>
+            <td><img src="/outimages/{{measurements[0]}}" style="width:100%"></td>
+            <td> <img src="/outimages/{{measurements[1]}}" style="width:100%"></td>
           </tr>
 
           <tr>
-
+              <td><h2>Image 1</h2></td>
+              <td><h2>Image 2</h2></td>
           </tr>
+
         </table>
 
-      <div>
-        <h3>Images are correct click button bellow to receive size.</h3>
-      </div>
+
+
+
         <form action="/measure" method="post">
             <button name="meausureBtn" type="submit">Get Size</button>
     </form>

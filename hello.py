@@ -147,6 +147,7 @@ def getSizeOfObject(filePath, f):
         cv2.imwrite('outimages/savedImage_' + str(f) + '_' + str(num) + '.png', orig)
         num += 1
 
+
         # cv2.imshow("Image",crop_img)
 
         # show the output image
@@ -216,6 +217,8 @@ def upload():
     
     return render_template('displayImg.html', filenames=filenames)
 
+
+
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],
@@ -223,8 +226,6 @@ def uploaded_file(filename):
 
 # @app.route('/measure',Methods=["POST","GET"])
 # def measure():
-
-
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -235,7 +236,12 @@ def allowed_file(filename):
     #call getSizeOfObject
     #return redirect( to display new cv procssed images )
 #######################################################################################
-
+@app.route('/measure', methods=['GET','POST'])
+def measure():
+    # Get the name of the uploaded files
+    measurements = os.listdir('outimages')
+    print(measurements)
+    return render_template('displaymeasurments.html', measurements=measurements)
 
 
 
