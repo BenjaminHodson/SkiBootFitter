@@ -1,3 +1,7 @@
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine
+import sqlalchemy
 import os
 from flask import Flask, render_template, request, redirect, url_for
 from flask import send_from_directory
@@ -12,13 +16,19 @@ import argparse
 import imutils
 import cv2
 
+
 #from flask-images import resized_img_src
+
+# from flask-images import resized_img_src
+
+
 
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 app = Flask(__name__, static_url_path="/static")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///boots.sqlite3'
@@ -29,8 +39,11 @@ db = SQLAlchemy(app)
 #customer table
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///customers.sqlite3'
+
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///boots.sqlite3'
 app.config['SECRET_KEY'] = "random string"
+
 
 
 #customer table
@@ -59,7 +72,37 @@ def __init__(self, name, img, sizes, width):
 
 
 
+#db = SQLAlchemy(app)
+# customer table
+
+#DATABASE###################################################################################
+# engine = create_engine('sqlite:///:memory:', echo=True)
+# Base = declarative_base()
+
+
+# class Boots(Base):
+#     __tablename__ = 'boots'
+#     id = Column(Integer, primary_key=True)
+#     name = Column(String)
+#     length = Column(Integer)
+#     width = Column(Integer)
+
+#     def __repr__(self):
+#         return "<Boots(name='%s', length='%d', width='%d')>" % (
+#             self.name, self.length, self.width)
+
+
+
+# Boots.__table__
+# Table('Boots', MetaData(bind=None),
+# Column('id', Integer(), table= < boots > , primary_key=True, nullable=False),
+# Column('name', String(), table= < boots > ),
+# Column('length', Integer(), table= < boots > ),
+# Column('width', Integer(), table= < boots > ), schema=None)
+
+# Base.metadata.create_all(engine)
 #n opencv for foot mesurment ###############################################################
+
 
 def getSizeOfObject(filePath, f):
     def midpoint(ptA, ptB):
@@ -143,7 +186,7 @@ def getSizeOfObject(filePath, f):
                  (255, 0, 255), 2)
 
         # compute the Euclidean distance between the midpoints
-        dAcd  = dist.euclidean((tltrX, tltrY), (blbrX, blbrY))
+        dA  = dist.euclidean((tltrX, tltrY), (blbrX, blbrY))
         dB = dist.euclidean((tlblX, tlblY), (trbrX, trbrY))
 
         # if the pixels per metric has not been initialized, then
@@ -162,27 +205,30 @@ def getSizeOfObject(filePath, f):
         # draw the object sizes on the image
         cv2.putText(orig, "{:.1f}in".format(dimA),
                     (int(tltrX - 15), int(tltrY - 10)), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.65, (255, 255, 255), 2)
+                    0.65, (0, 0, 0), 2)
         cv2.putText(orig, "{:.1f}in".format(dimB),
                     (int(trbrX + 10), int(trbrY)), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.65, (255, 255, 255), 2)
-
-
+                    0.65, (0, 0, 0), 2)
 
         # cropping image
         # crop_img = orig[ytR:ybR, xtL:xtR]
 
         # saving image
 
-        cv2.imwrite('outimages/savedImage_' + str(f) + '_' + str(num) + '.png', orig)
-        num += 1
+        cv2.imwrite('static/outimages/savedImage_' +
+                    str(f) + '_' + str(num) + '.png', orig)
+        savedDimA = dimA * 2.54
+        savedDimB = dimB * 2.54
+        print('MondopointA value: ' + str(savedDimA) +
+              ' MondopointB value: ' + str(savedDimB))
 
+        num += 1
 
         # cv2.imshow("Image",crop_img)
 
         # show the output image
         #cv2.imshow("Image", orig)
-        #cv2.waitKey(0)
+        # cv2.waitKey(0)
 
 
 # getSizeOfObject('images/IMG_0429.jpg')
@@ -191,13 +237,15 @@ def getSizeOfObject(filePath, f):
 #########################################################################################
 
 
-
 # This is the path to the upload directory
 app.config['UPLOAD_FOLDER'] = 'static/uploads/'
 # These are the extension that we are accepting to be uploaded
-app.config['ALLOWED_EXTENSIONS'] = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+app.config['ALLOWED_EXTENSIONS'] = set(
+    ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 # For a given file, return whether it's an allowed type or not
+
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
@@ -210,14 +258,12 @@ def index():
     return render_template('main.html')
 
 
-
-
-#Route that will process the file upload
-@app.route('/upload', methods=[ 'POST'])
+# Route that will process the file upload
+@app.route('/upload', methods=['POST'])
 def upload():
     # Get the name of the uploaded files
     uploaded_files = request.files.getlist("file[]")
-    print (uploaded_files)
+    #print (uploaded_files)
     filenames = []
     for file in uploaded_files:
         # Check if the file is one of the allowed types/extensions
@@ -233,20 +279,18 @@ def upload():
             # will basicaly show on the browser the uploaded file
     # Load an html page with a link to each uploaded file
 
-
     uploadedfiles = os.listdir('static/uploads')
     # getSizeOfObject(filenames[0])
     #
-    print (uploadedfiles)
+   # print (uploadedfiles)
 
     length = len(filenames)
     for f in range(length):
-        print('uploads/' + filenames[f])
+        #    print('uploads/' + filenames[f])
         getSizeOfObject('static/uploads/' + filenames[f], f)
-    #getSizeOfObject('static/uploads/foot1.jpg')
-    
-    return render_template('displayImg.html', filenames=filenames)
+    # getSizeOfObject('static/uploads/foot1.jpg')
 
+    return render_template('displayimg.html', filenames=filenames)
 
 
 @app.route('/uploads/<filename>')
@@ -257,22 +301,31 @@ def uploaded_file(filename):
 # @app.route('/measure',Methods=["POST","GET"])
 # def measure():
 
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # @app.route('/size', methods=[ 'POST'])
 # def size():
-    #call getSizeOfObject
-    #return redirect( to display new cv procssed images )
+    # call getSizeOfObject
+    # return redirect( to display new cv procssed images )
 #######################################################################################
-@app.route('/measure', methods=['GET','POST'])
+@app.route('/measure', methods=['GET', 'POST'])
 def measure():
     # Get the name of the uploaded files
-    measurements = os.listdir('outimages')
+    measurements = os.listdir('static/outimages')
     print(measurements)
-    return render_template('displaymeasurments.html', measurements=measurements)
+    length = len(measurements)
+    isLength = 0
+    for m in range(length):
+        print("isLength: " + str(isLength))
+        if(isLength < length):
+            print('static/outimages/' + measurements[m])
+            getSizeOfObject('static/outimages/' + measurements[m], m)
+            isLength += 1
 
+    return render_template('displaymeasurments.html', measurements=measurements)
 
 
 if __name__ == "__main__":
@@ -280,10 +333,4 @@ if __name__ == "__main__":
    # getSizeOfObject('images/IMG_0429.jpg')
     app.run(debug=True)
 
-
-
     #app = Flask(__name__)
-
-
-
-

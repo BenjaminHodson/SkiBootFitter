@@ -1,5 +1,7 @@
 <!doctype html>
      <html lang="en" dir="ltr">
+        <link rel="stylesheet" type="text/css" href="/static/style.css">
+
     <title>Uploaded images</title>
 
     <div>
@@ -22,8 +24,8 @@
                 <th><h3 style="text-align:center">your big ass mutha fucking feet</h3></th>
             </tr>
           <tr>
-            <td><img src="/outimages/{{measurements[0]}}" style="width:100%"></td>
-            <td> <img src="/outimages/{{measurements[1]}}" style="width:100%"></td>
+            <td><img src="static/outimages/{{measurements[0]}}" style="width:100%"></td>
+            <td> <img src="static/outimages/{{measurements[1]}}" style="width:100%"></td>
           </tr>
 
           <tr>
@@ -36,7 +38,7 @@
 
 
 
-        <form action="/measure" method="post">
+        <form action="/measures" method="post">
             <button name="meausureBtn" type="submit">Get Size</button>
     </form>
     </div>
