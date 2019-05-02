@@ -1,8 +1,8 @@
 import os
-from flask import Flask, flash, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for
 from flask import send_from_directory
 from werkzeug.utils import secure_filename
-#from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 from werkzeug import secure_filename, SharedDataMiddleware
 from scipy.spatial import distance as dist
 from imutils import perspective
@@ -11,6 +11,7 @@ import numpy as np
 import argparse
 import imutils
 import cv2
+
 #from flask-images import resized_img_src
 
 UPLOAD_FOLDER = 'static/uploads'
@@ -20,13 +21,42 @@ app = Flask(__name__, static_url_path="/static")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///customers.sqlite3'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///boots.sqlite3'
-app.config['SECRET_KEY'] = "random string"
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///boots.sqlite3'
+#app.config['SECRET_KEY'] = "random string"
 #images = Images(app)
 
-#db = SQLAlchemy(app)
+db = SQLAlchemy(app)
 #customer table
+
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///customers.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///boots.sqlite3'
+app.config['SECRET_KEY'] = "random string"
+
+
+#customer table
+
+# imagelist = ['static/uploads/BCARDFinal-02.png','static/uploads/Candy37X37test.jpg','static/uploads/Cone37X37test.jpg']
+# print os.listdir('static/uploads')
+
+
+
+   # customer table
+
+   # boots
+class boots(db.Model):
+       id = db.Column('boots_id', db.Integer, primary_key=True)
+       name = db.Column(db.String(100))
+       img = db.Column(db.String(50))
+       sizes = db.Column(db.Numeric(5, 1))
+       width = db.Column(db.Numeric(5, 2))
+
+
+def __init__(self, name, img, sizes, width):
+       self.name = name
+       self.img = img
+       self.sizes = sizes
+       self.width = width
+
 
 
 #n opencv for foot mesurment ###############################################################
@@ -113,7 +143,7 @@ def getSizeOfObject(filePath, f):
                  (255, 0, 255), 2)
 
         # compute the Euclidean distance between the midpoints
-        dA = dist.euclidean((tltrX, tltrY), (blbrX, blbrY))
+        dAcd  = dist.euclidean((tltrX, tltrY), (blbrX, blbrY))
         dB = dist.euclidean((tlblX, tlblY), (trbrX, trbrY))
 
         # if the pixels per metric has not been initialized, then
@@ -246,7 +276,7 @@ def measure():
 
 
 if __name__ == "__main__":
-   # db.create_all()
+    db.create_all()
    # getSizeOfObject('images/IMG_0429.jpg')
     app.run(debug=True)
 
