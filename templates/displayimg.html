@@ -1,43 +1,34 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" dir="ltr">
-<head>
+  <head>
     <title>Uploaded images</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-
- <body>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
     <div>
       <div class="header">
         <h3 class="text-muted" style="text-align:center">Uploaded files</h3>
-          </div>
-      <div>
-
       </div>
-           <div>
-
-      </div>
-        <table >
-            <tr>
-                <th><h3 style="text-align:center">your big ass mutha fucking feet</h3></th>
-            </tr>
-          <tr>
-            <td><img class="pic" src="static/uploads/{{filenames[0]}}" ></td>
-            <td> <img  class="pic" src="static/uploads/{{filenames[1]}}"></td>
-          </tr>
-
-          <tr>
-              <td><h2>Image 1</h2></td>
-              <td><h2>Image 2</h2></td>
-          </tr>
-
-        </table>
+      <table>
+        <tr>
+          <td><img class="pic" src="static/uploads/{{ filenames[0] }}" /></td>
+          <td><img class="pic" src="static/uploads/{{ filenames[1] }}" /></td>
+        </tr>
+        <tr>
+          <td><h2>Image 1</h2></td>
+          <td><h2>Image 2</h2></td>
+        </tr>
+      </table>
 
       <div>
-        <h3>Images are correct click button bellow to receive size.</h3>
+        <h3>Images are correct click button below to receive size.</h3>
       </div>
-        <form action="/measure" method="post">
-            <button name="measureBtn" type="submit">Get Size</button>
-    </form>
+      <form action="/measure" method="post">
+        <button name="measureBtn" type="submit">Get Size</button>
+      </form>
     </div>
- </body>
+  </body>
 </html>

@@ -20,10 +20,6 @@ import time
 
 global dimArray
 dimArray = []
-#from flask-images import resized_img_src
-#dbmg_src
-
-
 
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -32,92 +28,14 @@ app = Flask(__name__, static_url_path="/static")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
-
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///boots.sqlite3'
-#app.config['SECRET_KEY'] = "random string"
-#images = Images(app)
-
 db = SQLAlchemy(app)
-#customer table
-
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///customers.sqlite3'
-
-
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///boots.sqlite3'
 app.config['SECRET_KEY'] = "random string"
-
-
-
-#customer table
-
-# imagelist = ['static/uploads/BCARDFinal-02.png','static/uploads/Candy37X37test.jpg','static/uploads/Cone37X37test.jpg']
-# print os.listdir('static/uploads')
-
-
-
-   # customer table
-
-   # boots
-class boots(db.Model):
-       id = db.Column('boots_id', db.Integer, primary_key=True)
-       name = db.Column(db.String(100))
-       img = db.Column(db.String(50))
-       sizes = db.Column(db.Integer)
-
-
-def __init__(self, name, img, sizes):
-       self.name = name
-       self.img = img
-       self.sizes = sizes
-
-#db.create_all()       
-
-
-
-#db = SQLAlchemy(app)
-# customer table
-
-#DATABASE###################################################################################
-# engine = create_engine('sqlite:///:memory:', echo=True)
-# Base = declarative_base()
-
-
-# class Boots(Base):
-#     __tablename__ = 'boots'
-#     id = Column(Integer, primary_key=True)
-#     name = Column(String)
-#     length = Column(Integer)
-#     width = Column(Integer)
-
-#     def __repr__(self):
-#         return "<Boots(name='%s', length='%d', width='%d')>" % (
-#             self.name, self.length, self.width)
-
-
-
-# Boots.__table__
-# Table('Boots', MetaData(bind=None),
-# Column('id', Integer(), table= < boots > , primary_key=True, nullable=False),
-# Column('name', String(), table= < boots > ),
-# Column('length', Integer(), table= < boots > ),
-# Column('width', Integer(), table= < boots > ), schema=None)
-
-# Base.metadata.create_all(engine)
-#n opencv for foot mesurment ###############################################################
 
 
 def getSizeOfObject(filePath, f):
     def midpoint(ptA, ptB):
         return ((ptA[0] + ptB[0]) * 0.5, (ptA[1] + ptB[1]) * 0.5)
-
-    # construct the argument parse and parse the arguments
-    # ap = argparse.ArgumentParser()
-    # ap.add_argument("-i", "--image", required=True,
-    #                 help="path to the input image")
-    # ap.add_argument("-w", "--width", type=float, required=True,
-    #                 help="width of the left-most object in the image (in inches)")
-    # args = vars(ap.parse_args())
-
     # load the image, convert it to grayscale, and blur it slightly
     image = cv2.imread(filePath)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -188,7 +106,7 @@ def getSizeOfObject(filePath, f):
                  (255, 0, 255), 2)
 
         # compute the Euclidean distance between the midpoints
-        dA  = dist.euclidean((tltrX, tltrY), (blbrX, blbrY))
+        dA = dist.euclidean((tltrX, tltrY), (blbrX, blbrY))
         dB = dist.euclidean((tlblX, tlblY), (trbrX, trbrY))
 
         # if the pixels per metric has not been initialized, then
@@ -212,41 +130,16 @@ def getSizeOfObject(filePath, f):
                     (int(trbrX + 10), int(trbrY)), cv2.FONT_HERSHEY_SIMPLEX,
                     0.65, (0, 0, 0), 2)
 
-        # cropping image
-        # crop_img = orig[ytR:ybR, xtL:xtR]
-
-        # saving image
-
         cv2.imwrite('static/outimages/savedImage_' +
                     str(f) + '_' + str(num) + '.png', orig)
-        global savedDimA 
+        global savedDimA
         savedDimA = dimA * 2.54
         savedDimB = dimB * 2.54
 
-        
         dimArray.append(savedDimA)
-        
-
-    
-
-        
-        print('MondopointA value: ' + str(savedDimA) +
-             ' MondopointB value: ' + str(savedDimB))
-
         num += 1
 
         return(savedDimA, savedDimB)
-
-        # cv2.imshow("Image",crop_img)
-
-        # show the output image
-        #cv2.imshow("Image", orig)
-        # cv2.waitKey(0)
-
-
-# getSizeOfObject('images/IMG_0429.jpg')
-
-
 #########################################################################################
 
 
@@ -293,16 +186,13 @@ def upload():
     # Load an html page with a link to each uploaded file
 
     uploadedfiles = os.listdir('static/uploads')
-    # getSizeOfObject(filenames[0])
-    #
-   # print (uploadedfiles)
 
     length = len(filenames)
     for f in range(length):
         #    print('uploads/' + filenames[f])
         getSizeOfObject('static/uploads/' + filenames[f], f)
     # getSizeOfObject('static/uploads/foot1.jpg')
-   
+
     return render_template('displayimg.html', filenames=filenames)
 
 
@@ -311,18 +201,11 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                filename)
 
-# @app.route('/measure',Methods=["POST","GET"])
-# def measure():
-
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# @app.route('/size', methods=[ 'POST'])
-# def size():
-    # call getSizeOfObject
-    # return redirect( to display new cv procssed images )
 #######################################################################################
 @app.route('/measure', methods=['GET', 'POST'])
 def measure():
@@ -343,19 +226,21 @@ def measure():
         if(bootArray[b].size < (dimArray[0]) and bootArray[b].size > (dimArray[0] - 1)):
             print('Comparison: ', bootArray[b].name)
             boot = bootArray[b].bootIMG
-            bootSize=bootArray[b].size
-            bootName=bootArray[b].name
+            bootSize = bootArray[b].size
+            bootName = bootArray[b].name
             print(boot)
-            
-    print ('THIS: ', boot1.size)
+
+    print('THIS: ', boot1.size)
     return render_template('displaymeasurments.html', measurements=measurements, boot=boot, bootSize=bootSize, bootName=bootName)
+
+
 class Boots:
     def __init__(self, name, id, size, bootIMG):
         self.name = name
         self.id = id
         self.size = size
         self.bootIMG = bootIMG
-            
+
 
 global boot1, boot2, boot3
 boot1 = Boots('Dalbelo Lupo TI', 1, 27.5, 'boot1.png')
@@ -364,12 +249,6 @@ boot3 = Boots('boot3', 3, 29.5, 'urlforimg')
 #print (savedDimA)
 
 
-
 if __name__ == "__main__":
-   #db.create_all()
-  # loadData(app, db)
-   # getSizeOfObject('images/IMG_0429.jpg')
     app.run(debug=True)
-
-
     app = Flask(__name__)
