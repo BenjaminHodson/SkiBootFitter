@@ -1,0 +1,34 @@
+.AddButton{
+    background-color: yellow;
+    color: black;
+}
+.AddButton:hover{
+    background-color: red;
+    color: white;
+}
+body{
+    background-color: #949494;
+    text-align: center;
+}
+.pic{
+padding: 1em;
+max-width: 50%; 
+
+}
+.bootInfo{
+    margin-left: auto;
+margin-right: auto;
+
+}
+
+h2{
+text-align:center;}
+
+.centertable{
+margin-left: auto;
+margin-right: auto;
+}
+tr{
+margin-left: auto;
+margin-right: auto;
+}

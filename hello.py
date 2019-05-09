@@ -15,11 +15,13 @@ import numpy as np
 import argparse
 import imutils
 import cv2
+import time
 
 
+global dimArray
+dimArray = []
 #from flask-images import resized_img_src
-
-# from flask-images import resized_img_src
+#dbmg_src
 
 
 
@@ -60,15 +62,15 @@ class boots(db.Model):
        id = db.Column('boots_id', db.Integer, primary_key=True)
        name = db.Column(db.String(100))
        img = db.Column(db.String(50))
-       sizes = db.Column(db.Numeric(5, 1))
-       width = db.Column(db.Numeric(5, 2))
+       sizes = db.Column(db.Integer)
 
 
-def __init__(self, name, img, sizes, width):
+def __init__(self, name, img, sizes):
        self.name = name
        self.img = img
        self.sizes = sizes
-       self.width = width
+
+#db.create_all()       
 
 
 
@@ -217,12 +219,23 @@ def getSizeOfObject(filePath, f):
 
         cv2.imwrite('static/outimages/savedImage_' +
                     str(f) + '_' + str(num) + '.png', orig)
+        global savedDimA 
         savedDimA = dimA * 2.54
         savedDimB = dimB * 2.54
+
+        
+        dimArray.append(savedDimA)
+        
+
+    
+
+        
         print('MondopointA value: ' + str(savedDimA) +
-              ' MondopointB value: ' + str(savedDimB))
+             ' MondopointB value: ' + str(savedDimB))
 
         num += 1
+
+        return(savedDimA, savedDimB)
 
         # cv2.imshow("Image",crop_img)
 
@@ -289,7 +302,7 @@ def upload():
         #    print('uploads/' + filenames[f])
         getSizeOfObject('static/uploads/' + filenames[f], f)
     # getSizeOfObject('static/uploads/foot1.jpg')
-
+   
     return render_template('displayimg.html', filenames=filenames)
 
 
@@ -324,13 +337,39 @@ def measure():
             print('static/outimages/' + measurements[m])
             getSizeOfObject('static/outimages/' + measurements[m], m)
             isLength += 1
+    bootArray = [boot1, boot2, boot3]
+    lenArray = len(bootArray)
+    for b in range(lenArray):
+        if(bootArray[b].size < (dimArray[0]) and bootArray[b].size > (dimArray[0] - 1)):
+            print('Comparison: ', bootArray[b].name)
+            boot = bootArray[b].bootIMG
+            bootSize=bootArray[b].size
+            bootName=bootArray[b].name
+            print(boot)
+            
+    print ('THIS: ', boot1.size)
+    return render_template('displaymeasurments.html', measurements=measurements, boot=boot, bootSize=bootSize, bootName=bootName)
+class Boots:
+    def __init__(self, name, id, size, bootIMG):
+        self.name = name
+        self.id = id
+        self.size = size
+        self.bootIMG = bootIMG
+            
 
-    return render_template('displaymeasurments.html', measurements=measurements)
+global boot1, boot2, boot3
+boot1 = Boots('Dalbelo Lupo TI', 1, 27.5, 'boot1.png')
+boot2 = Boots('boot2', 2, 26.5, 'boot1.png')
+boot3 = Boots('boot3', 3, 29.5, 'urlforimg')
+#print (savedDimA)
+
 
 
 if __name__ == "__main__":
-    db.create_all()
+   #db.create_all()
+  # loadData(app, db)
    # getSizeOfObject('images/IMG_0429.jpg')
     app.run(debug=True)
 
-    #app = Flask(__name__)
+
+    app = Flask(__name__)
